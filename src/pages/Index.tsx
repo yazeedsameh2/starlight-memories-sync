@@ -226,13 +226,26 @@ function Space({
       <div className="relative w-full max-w-[430px] min-h-screen bg-background shadow-soft flex flex-col">
         <header className="sticky top-0 z-20 px-6 pt-6 pb-4 bg-background/80 backdrop-blur-xl">
           <div className="flex items-center justify-between">
-            <h1 className="font-display text-[26px] font-semibold tracking-tight">
-              Our Space <span className="text-coral">❤</span>
-            </h1>
-            <div className="flex items-center gap-3">
+            <button
+              onClick={() => setGalleryOpen(true)}
+              className="flex items-center gap-2 text-left active:scale-[0.98] transition-transform"
+              aria-label="Open shared media"
+            >
+              <h1 className="font-display text-[26px] font-semibold tracking-tight">
+                Our Space <span className="text-coral">❤</span>
+              </h1>
+            </button>
+            <div className="flex items-center gap-2">
               <span className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
                 {viewer === "me" ? "Yazeed" : viewer}
               </span>
+              <button
+                onClick={() => setGalleryOpen(true)}
+                aria-label="Shared media"
+                className="w-8 h-8 rounded-full bg-card border border-border flex items-center justify-center text-muted-foreground hover:text-foreground active:scale-90 transition-all"
+              >
+                <Info className="w-3.5 h-3.5" />
+              </button>
               <button
                 onClick={onLock}
                 aria-label="Lock space"
