@@ -38,6 +38,7 @@ function Space({
   onLock: () => void;
 }) {
   const [view, setView] = useState<View>("memories");
+  const [galleryOpen, setGalleryOpen] = useState(false);
   const [memories, setMemories] = useState<Memory[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [addOpen, setAddOpen] = useState(false);
