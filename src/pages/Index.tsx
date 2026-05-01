@@ -313,6 +313,7 @@ function Space({
         </nav>
 
         <AddMemorySheet open={addOpen} onOpenChange={setAddOpen} onPost={handlePostMemory} />
+        <SharedMediaSheet open={galleryOpen} onOpenChange={setGalleryOpen} token={token} />
       </div>
     </div>
   );
