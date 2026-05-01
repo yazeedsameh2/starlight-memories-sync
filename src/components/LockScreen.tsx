@@ -84,7 +84,7 @@ export function LockScreen() {
                     : "bg-card border border-border text-muted-foreground"
                 )}
               >
-                {v}
+                {v === "me" ? "Yazeed" : v}
               </button>
             ))}
           </div>
