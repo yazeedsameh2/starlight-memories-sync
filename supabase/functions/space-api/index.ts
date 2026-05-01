@@ -247,9 +247,9 @@ async function handle({ action, data }: Body) {
     case "sendMessage": {
       await requireToken(data?.token);
       const sender = data.sender;
-      const text = String(data.text ?? "");
+      const text = data.text ? String(data.text) : null;
       if (sender !== "me" && sender !== "meiso") throw new Error("Bad sender");
-      if (!text || text.length > 2000) throw new Error("Bad text");
+      if (!text || text.length === 0 || text.length > 2000) throw new Error("Bad text");
       const { data: row, error } = await supabaseAdmin
         .from("messages")
         .insert({ sender, text, status: "sent" })
@@ -257,6 +257,64 @@ async function handle({ action, data }: Body) {
         .single();
       if (error) throw new Error(error.message);
       return { message: row };
+    }
+
+    case "sendMediaMessage": {
+      await requireToken(data?.token);
+      const sender = data.sender;
+      const mediaType = data.mediaType as "image" | "video" | "audio";
+      const contentType = String(data.contentType ?? "");
+      const fileBase64 = String(data.fileBase64 ?? "");
+      const caption = data.caption ? String(data.caption).slice(0, 280) : null;
+      const durationMs = typeof data.durationMs === "number" ? data.durationMs : null;
+      if (sender !== "me" && sender !== "meiso") throw new Error("Bad sender");
+      if (!["image", "video", "audio"].includes(mediaType)) throw new Error("Bad mediaType");
+      if (!contentType) throw new Error("Missing contentType");
+
+      const b64 = fileBase64.includes(",") ? fileBase64.split(",")[1] : fileBase64;
+      const bytes = b64urlDecodeRaw(b64);
+      const maxBytes = mediaType === "video" ? 50 * 1024 * 1024 : 15 * 1024 * 1024;
+      if (bytes.length === 0) throw new Error("Empty file");
+      if (bytes.length > maxBytes) throw new Error("File too large");
+
+      const extGuess = contentType.split("/")[1]?.split(";")[0] || "bin";
+      const ext = extGuess.replace("jpeg", "jpg").replace("quicktime", "mov");
+      const path = `${mediaType}/${crypto.randomUUID()}.${ext}`;
+      const { error: upErr } = await supabaseAdmin.storage
+        .from("chat-media")
+        .upload(path, bytes, { contentType, upsert: false });
+      if (upErr) throw new Error(upErr.message);
+      const { data: { publicUrl } } = supabaseAdmin.storage
+        .from("chat-media")
+        .getPublicUrl(path);
+
+      const { data: row, error } = await supabaseAdmin
+        .from("messages")
+        .insert({
+          sender,
+          text: caption,
+          status: "sent",
+          media_url: publicUrl,
+          media_path: path,
+          media_type: mediaType,
+          duration_ms: durationMs,
+        })
+        .select()
+        .single();
+      if (error) throw new Error(error.message);
+      return { message: row };
+    }
+
+    case "listMedia": {
+      await requireToken(data?.token);
+      const { data: rows, error } = await supabaseAdmin
+        .from("messages")
+        .select("*")
+        .not("media_url", "is", null)
+        .order("created_at", { ascending: false })
+        .limit(500);
+      if (error) throw new Error(error.message);
+      return { media: rows ?? [] };
     }
 
     case "markMessagesRead": {

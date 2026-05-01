@@ -66,6 +66,23 @@ export const sendMessage = ({
   data: { token: string; sender: "me" | "meiso"; text: string };
 }) => call<{ message: any }>("sendMessage", data);
 
+export const sendMediaMessage = ({
+  data,
+}: {
+  data: {
+    token: string;
+    sender: "me" | "meiso";
+    mediaType: "image" | "video" | "audio";
+    contentType: string;
+    fileBase64: string;
+    caption?: string;
+    durationMs?: number;
+  };
+}) => call<{ message: any }>("sendMediaMessage", data);
+
+export const listMedia = ({ data }: { data: { token: string } }) =>
+  call<{ media: any[] }>("listMedia", data);
+
 export const markMessagesRead = ({
   data,
 }: {

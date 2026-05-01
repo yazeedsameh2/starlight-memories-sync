@@ -44,24 +44,42 @@ export type Database = {
       messages: {
         Row: {
           created_at: string
+          duration_ms: number | null
+          height: number | null
           id: string
+          media_path: string | null
+          media_type: string | null
+          media_url: string | null
           sender: string
           status: string
-          text: string
+          text: string | null
+          width: number | null
         }
         Insert: {
           created_at?: string
+          duration_ms?: number | null
+          height?: number | null
           id?: string
+          media_path?: string | null
+          media_type?: string | null
+          media_url?: string | null
           sender: string
           status?: string
-          text: string
+          text?: string | null
+          width?: number | null
         }
         Update: {
           created_at?: string
+          duration_ms?: number | null
+          height?: number | null
           id?: string
+          media_path?: string | null
+          media_type?: string | null
+          media_url?: string | null
           sender?: string
           status?: string
-          text?: string
+          text?: string | null
+          width?: number | null
         }
         Relationships: []
       }
