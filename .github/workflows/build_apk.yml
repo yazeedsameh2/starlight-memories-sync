@@ -6,19 +6,22 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true # ده هيحل مشكلة الـ Node.js اللي في الصورة
     steps:
-      - uses: actions/checkout@v4 # تحديث لـ v4
-      - uses: actions/setup-java@v4 # تحديث لـ v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.0'
+          cache: true # هيسرع الـ Build المرة الجاية
       - run: flutter pub get
-      - run: flutter build apk --release
+      - run: flutter build apk --release --no-tree-shake-icons # الـ Flag ده بيحل مشاكل كتير في الـ Build
       - name: Upload APK
-        uses: actions/upload-artifact@v4 # ده التعديل اللي هيحل الـ Error
+        uses: actions/upload-artifact@v4
         with:
           name: our-space-app
           path: build/app/outputs/flutter-apk/app-release.apk
