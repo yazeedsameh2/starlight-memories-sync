@@ -130,9 +130,16 @@ function Space({
         time: m.time,
       }))
       .filter(
-        (m): m is { sender: "me" | "meiso"; text: string; status?: "sent" | "delivered" | "read"; time?: string } =>
-          (m.sender === "me" || m.sender === "meiso") && typeof m.text === "string" && m.text.length > 0,
-      );
+        (m) =>
+          (m.sender === "me" || m.sender === "meiso") &&
+          typeof m.text === "string" &&
+          m.text.length > 0,
+      ) as Array<{
+        sender: "me" | "meiso";
+        text: string;
+        status?: "sent" | "delivered" | "read";
+        time?: string;
+      }>;
 
     if (memoriesPayload.length === 0 && messagesPayload.length === 0) {
       localStorage.setItem(MIGRATION_KEY, "1");
