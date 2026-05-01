@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Image as ImageIcon, MessageCircle, Plus, Lock as LockIcon } from "lucide-react";
+import { Image as ImageIcon, MessageCircle, Plus, Lock as LockIcon, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { MemoryCard, type Memory } from "@/components/MemoryCard";
 import { ChatView, type Message } from "@/components/ChatView";
 import { AddMemorySheet } from "@/components/AddMemorySheet";
 import { LockScreen } from "@/components/LockScreen";
+import { SharedMediaSheet } from "@/components/SharedMediaSheet";
 import { useSpace } from "@/components/SpaceProvider";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -13,6 +14,7 @@ import {
   listMessages,
   markMessagesRead,
   migrateLocalData,
+  sendMediaMessage,
   sendMessage,
   toggleMemoryLike,
 } from "@/server/space.functions";
