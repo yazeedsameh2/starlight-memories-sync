@@ -197,6 +197,30 @@ function Space({
     await sendMessage({ data: { token, sender: viewer, text } });
   };
 
+  const handleSendMedia = async ({
+    mediaType,
+    file,
+    contentType,
+    durationMs,
+    caption,
+  }: {
+    mediaType: "image" | "video" | "audio";
+    file: Blob;
+    contentType: string;
+    durationMs?: number;
+    caption?: string;
+  }) => {
+    const fileBase64 = await new Promise<string>((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(String(r.result).split(",")[1] || "");
+      r.onerror = reject;
+      r.readAsDataURL(file);
+    });
+    await sendMediaMessage({
+      data: { token, sender: viewer, mediaType, contentType, fileBase64, durationMs, caption },
+    });
+  };
+
   return (
     <div className="min-h-screen flex justify-center">
       <div className="relative w-full max-w-[430px] min-h-screen bg-background shadow-soft flex flex-col">
