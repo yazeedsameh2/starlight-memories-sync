@@ -204,7 +204,7 @@ function Space({
             </h1>
             <div className="flex items-center gap-3">
               <span className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
-                {viewer}
+                {viewer === "me" ? "Yazeed" : viewer}
               </span>
               <button
                 onClick={onLock}
