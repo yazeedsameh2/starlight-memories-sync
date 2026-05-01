@@ -94,6 +94,20 @@
     @apply border-border;
   }
 
+  /*
+   * Aliases for components that reference --coral / --rose-gold via
+   * Tailwind's arbitrary value syntax (e.g. text-[var(--coral)]). These
+   * resolve to a real color so the classes work everywhere.
+   */
+  :root {
+    --coral: hsl(12 78% 64%);
+    --rose-gold: hsl(25 55% 70%);
+  }
+  .dark {
+    --coral: hsl(12 78% 64%);
+    --rose-gold: hsl(25 55% 70%);
+  }
+
   body {
     @apply text-foreground;
     background: var(--gradient-soft);
