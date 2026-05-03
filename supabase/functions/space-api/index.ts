@@ -233,6 +233,55 @@ async function handle({ action, data }: Body) {
       return { ok: true };
     }
 
+    case "deleteMemory": {
+      await requireToken(data?.token);
+      const id = String(data?.id ?? "");
+      if (!id) throw new Error("Missing id");
+      const { data: row, error: selErr } = await supabaseAdmin
+        .from("memories")
+        .select("storage_path")
+        .eq("id", id)
+        .maybeSingle();
+      if (selErr) throw new Error(selErr.message);
+      if (row?.storage_path) {
+        await supabaseAdmin.storage.from("memories").remove([row.storage_path]);
+      }
+      const { error } = await supabaseAdmin.from("memories").delete().eq("id", id);
+      if (error) throw new Error(error.message);
+      return { ok: true };
+    }
+
+    case "listComments": {
+      await requireToken(data?.token);
+      const memoryId = String(data?.memoryId ?? "");
+      if (!memoryId) throw new Error("Missing memoryId");
+      const { data: rows, error } = await supabaseAdmin
+        .from("memory_comments")
+        .select("*")
+        .eq("memory_id", memoryId)
+        .order("created_at", { ascending: true })
+        .limit(500);
+      if (error) throw new Error(error.message);
+      return { comments: rows ?? [] };
+    }
+
+    case "addComment": {
+      await requireToken(data?.token);
+      const memoryId = String(data?.memoryId ?? "");
+      const sender = data?.sender;
+      const text = data?.text ? String(data.text) : "";
+      if (!memoryId) throw new Error("Missing memoryId");
+      if (sender !== "me" && sender !== "meiso") throw new Error("Bad sender");
+      if (!text || text.length === 0 || text.length > 1000) throw new Error("Bad text");
+      const { data: row, error } = await supabaseAdmin
+        .from("memory_comments")
+        .insert({ memory_id: memoryId, sender, text })
+        .select()
+        .single();
+      if (error) throw new Error(error.message);
+      return { comment: row };
+    }
+
     case "listMessages": {
       await requireToken(data?.token);
       const { data: rows, error } = await supabaseAdmin
