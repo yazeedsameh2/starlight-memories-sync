@@ -16,8 +16,7 @@ const isInIframe = (() => {
 
 const isPreviewHost =
   window.location.hostname.includes("id-preview--") ||
-  window.location.hostname.includes("lovableproject.com") ||
-  window.location.hostname.includes("lovable.app");
+  window.location.hostname.includes("lovableproject.com");
 
 if ("serviceWorker" in navigator) {
   if (isInIframe || isPreviewHost || import.meta.env.DEV) {
