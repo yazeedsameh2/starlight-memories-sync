@@ -10,6 +10,7 @@ import { useSpace } from "@/components/SpaceProvider";
 import { supabase } from "@/integrations/supabase/client";
 import {
   createMemory,
+  deleteMemory,
   listMemories,
   listMessages,
   markMessagesRead,
@@ -193,6 +194,17 @@ function Space({
     }
   };
 
+  const handleDeleteMemory = async (id: string) => {
+    const prev = memories;
+    setMemories((p) => p.filter((m) => m.id !== id));
+    try {
+      await deleteMemory({ data: { token, id } });
+    } catch (e) {
+      console.error(e);
+      setMemories(prev);
+    }
+  };
+
   const handleSendMessage = async (text: string) => {
     await sendMessage({ data: { token, sender: viewer, text } });
   };
@@ -223,7 +235,7 @@ function Space({
 
   return (
     <div className="min-h-screen flex justify-center">
-      <div className="relative w-full max-w-[430px] min-h-screen bg-background shadow-soft flex flex-col">
+      <div className="relative w-full max-w-[430px] md:max-w-3xl lg:max-w-5xl min-h-screen bg-background shadow-soft flex flex-col">
         <header className="sticky top-0 z-20 px-6 pt-6 pb-4 bg-background/80 backdrop-blur-xl">
           <div className="flex items-center justify-between">
             <button
@@ -259,22 +271,25 @@ function Space({
 
         <main className="flex-1 flex flex-col overflow-hidden">
           {view === "memories" ? (
-            <div className="flex-1 overflow-y-auto px-5 pt-2 pb-32 space-y-5 scroll-smooth">
+            <div className="flex-1 overflow-y-auto px-5 pt-2 pb-32 scroll-smooth">
               {memories.length === 0 && (
                 <p className="text-center text-sm text-muted-foreground italic pt-16">
                   No memories yet. Tap the + to add your first ❤
                 </p>
               )}
-              {memories.map((m, i) => (
-                <MemoryCard
-                  key={m.id}
-                  memory={m}
-                  index={i}
-                  onToggleLike={handleToggleLike}
-                />
-              ))}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {memories.map((m, i) => (
+                  <MemoryCard
+                    key={m.id}
+                    memory={m}
+                    index={i}
+                    onToggleLike={handleToggleLike}
+                    onDelete={handleDeleteMemory}
+                  />
+                ))}
+              </div>
               {memories.length > 0 && (
-                <p className="text-center text-xs text-muted-foreground pt-4 italic">
+                <p className="text-center text-xs text-muted-foreground pt-6 italic">
                   The beginning of us.
                 </p>
               )}
@@ -286,7 +301,7 @@ function Space({
           )}
         </main>
 
-        <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-30 pointer-events-none">
+        <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] md:max-w-md z-30 pointer-events-none">
           <div className="relative pointer-events-auto mx-4 mb-4 h-16 rounded-full bg-card/95 backdrop-blur-xl shadow-soft border border-border flex items-center justify-around px-6">
             <NavButton
               active={view === "memories"}

@@ -56,6 +56,24 @@ export const toggleMemoryLike = ({
   data: { token: string; id: string; liked: boolean };
 }) => call<{ ok: true }>("toggleMemoryLike", data);
 
+export const deleteMemory = ({
+  data,
+}: {
+  data: { token: string; id: string };
+}) => call<{ ok: true }>("deleteMemory", data);
+
+export const listComments = ({
+  data,
+}: {
+  data: { token: string; memoryId: string };
+}) => call<{ comments: any[] }>("listComments", data);
+
+export const addComment = ({
+  data,
+}: {
+  data: { token: string; memoryId: string; sender: "me" | "meiso"; text: string };
+}) => call<{ comment: any }>("addComment", data);
+
 // ----- Messages -----
 export const listMessages = ({ data }: { data: { token: string } }) =>
   call<{ messages: any[] }>("listMessages", data);
