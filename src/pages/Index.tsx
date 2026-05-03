@@ -194,6 +194,17 @@ function Space({
     }
   };
 
+  const handleDeleteMemory = async (id: string) => {
+    const prev = memories;
+    setMemories((p) => p.filter((m) => m.id !== id));
+    try {
+      await deleteMemory({ data: { token, id } });
+    } catch (e) {
+      console.error(e);
+      setMemories(prev);
+    }
+  };
+
   const handleSendMessage = async (text: string) => {
     await sendMessage({ data: { token, sender: viewer, text } });
   };
