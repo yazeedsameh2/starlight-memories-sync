@@ -41,6 +41,38 @@ export type Database = {
         }
         Relationships: []
       }
+      memory_comments: {
+        Row: {
+          created_at: string
+          id: string
+          memory_id: string
+          sender: string
+          text: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          memory_id: string
+          sender: string
+          text: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          memory_id?: string
+          sender?: string
+          text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "memory_comments_memory_id_fkey"
+            columns: ["memory_id"]
+            isOneToOne: false
+            referencedRelation: "memories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           created_at: string
