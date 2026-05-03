@@ -10,6 +10,7 @@ import { useSpace } from "@/components/SpaceProvider";
 import { supabase } from "@/integrations/supabase/client";
 import {
   createMemory,
+  deleteMemory,
   listMemories,
   listMessages,
   markMessagesRead,
